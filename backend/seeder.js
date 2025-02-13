@@ -8,15 +8,19 @@ import AttendanceRecord from "./models/AttendanceRecord.js";
 import Log from "./models/Log.js";
 
 dotenv.config();
-connectDB(); // Kết nối database
 
 const seedData = async () => {
     try {
+        await connectDB(); // Kết nối database
+        console.log("🔗 Kết nối MongoDB thành công!");
+
         // 1️⃣ Xóa toàn bộ dữ liệu cũ
-        await User.deleteMany();
-        await Activity.deleteMany();
-        await AttendanceRecord.deleteMany();
-        await Log.deleteMany();
+        await Promise.all([
+            User.deleteMany(),
+            Activity.deleteMany(),
+            AttendanceRecord.deleteMany(),
+            Log.deleteMany(),
+        ]);
         console.log("🗑️ Đã xóa toàn bộ dữ liệu cũ.");
 
         // 2️⃣ Tạo Super Admin
@@ -26,7 +30,7 @@ const seedData = async () => {
             email: "superadmin@example.com",
             password: hashedPassword,
             role: "super_admin",
-            isVerified:true,
+            isVerified: true,
         });
 
         console.log("✅ Đã tạo tài khoản Super Admin:", superAdmin.email);
@@ -37,7 +41,7 @@ const seedData = async () => {
             email: "admin@example.com",
             password: hashedPassword,
             role: "admin",
-            isVerified:true,
+            isVerified: true,
         });
 
         console.log("✅ Đã tạo tài khoản Admin:", admin.email);
@@ -48,7 +52,7 @@ const seedData = async () => {
             email: "student@example.com",
             password: hashedPassword,
             role: "student",
-            isVerified:true,
+            isVerified: true,
         });
 
         console.log("✅ Đã tạo tài khoản Sinh viên:", student.email);
@@ -63,26 +67,13 @@ const seedData = async () => {
 
         console.log("✅ Đã tạo hoạt động:", activity.name);
 
-        // 6️⃣ Tạo bản ghi điểm danh mẫu
-        const attendance = await AttendanceRecord.create({
-            student_id: student._id,
-            activity_id: activity._id,
-            status: "present",
-            timestamp: new Date(),
-        });
-
-        console.log("✅ Đã tạo bản ghi điểm danh cho:", student.name);
-
-        // 7️⃣ Tạo Log hệ thống
-        await Log.create([
-            { user_id: admin._id, action: "Tạo hoạt động: Hoạt động tình nguyện" },
-            { user_id: student._id, action: "Điểm danh thành công" },
-        ]);
-
-        console.log("✅ Đã tạo log hoạt động.");
-
-        console.log("🎉 Seeder hoàn thành!");
-        process.exit(); // Thoát chương trình sau khi nhập dữ liệu xong
+        console.log("🎉 Seed dữ liệu hoàn tất!");
+        
+        // Đóng kết nối MongoDB
+        await mongoose.connection.close();
+        console.log("🔌 Đã đóng kết nối MongoDB.");
+        
+        process.exit(0);
     } catch (error) {
         console.error("❌ Lỗi khi seed dữ liệu:", error);
         process.exit(1);
