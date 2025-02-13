@@ -26,6 +26,7 @@ const seedData = async () => {
             email: "superadmin@example.com",
             password: hashedPassword,
             role: "super_admin",
+            isVerified:true,
         });
 
         console.log("✅ Đã tạo tài khoản Super Admin:", superAdmin.email);
@@ -36,6 +37,7 @@ const seedData = async () => {
             email: "admin@example.com",
             password: hashedPassword,
             role: "admin",
+            isVerified:true,
         });
 
         console.log("✅ Đã tạo tài khoản Admin:", admin.email);
@@ -46,6 +48,7 @@ const seedData = async () => {
             email: "student@example.com",
             password: hashedPassword,
             role: "student",
+            isVerified:true,
         });
 
         console.log("✅ Đã tạo tài khoản Sinh viên:", student.email);

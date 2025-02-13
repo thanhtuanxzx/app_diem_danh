@@ -20,6 +20,8 @@ export const authenticateUser = (req, res, next) => {
         // console.log("Decoded Token:", decoded); // 🛠 Xem nội dung token
 
         req.user = decoded;
+        console.log("Request User:", req.user); // 🛠 Kiểm tra user từ token
+
         next();
     } catch (error) {
         // console.error("🚨 Lỗi xác thực Token:", error.message);

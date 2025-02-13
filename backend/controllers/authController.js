@@ -71,16 +71,20 @@ export const login = async (req, res) => {
 
         if (!user) return res.status(400).json({ message: 'Email không tồn tại' });
 
+        // Kiểm tra tài khoản đã xác thực hay chưa
+        if (!user.isVerified) return res.status(403).json({ message: 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email!' });
+
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) return res.status(401).json({ message: 'Mật khẩu không đúng' });
 
-        const token = jwt.sign({ id: user._id, email: user.email ,role: user.role}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.json({ token, message: 'Đăng nhập thành công' });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi đăng nhập', error });
     }
 };
+
 
 export const forgotPassword = async (req, res) => {
     try {
